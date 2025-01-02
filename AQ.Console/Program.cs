@@ -1,3 +1,24 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using AQ.Console.Commands;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Spectre.Console.Cli;
+using Spectre.Console.Extensions.Hosting;
 
-Console.WriteLine("Hello, World!");
+await Host.CreateDefaultBuilder(args)
+    .UseConsoleLifetime()
+    .ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddConsole();
+        logging.SetMinimumLevel(LogLevel.Information);
+    
+        logging.AddFilter("Default", LogLevel.Information);
+        logging.AddFilter("System", LogLevel.Warning);
+        logging.AddFilter("Microsoft", LogLevel.Warning);
+    })
+    .UseSpectreConsole(config =>
+    {
+        config.SetApplicationName("aq");
+        config.AddCommand<ShowStatus>("status")
+            .WithDescription("Shows status");
+    }).RunConsoleAsync();
