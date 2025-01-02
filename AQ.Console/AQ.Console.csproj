@@ -13,4 +13,8 @@
       <PackageReference Include="Spectre.Console.Extensions.Hosting" Version="0.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AQ.Models\AQ.Models.csproj" />
+    </ItemGroup>
+
 </Project>

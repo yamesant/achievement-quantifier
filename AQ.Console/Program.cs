@@ -19,6 +19,18 @@ await Host.CreateDefaultBuilder(args)
     .UseSpectreConsole(config =>
     {
         config.SetApplicationName("aq");
+        config.AddBranch("class", config =>
+        {
+            config.SetDescription("Manipulate achievement classes (add/delete/list/update)");
+            config.AddCommand<AddAchievementClass>("add")
+                .WithDescription("Add an achievement class");
+            config.AddCommand<DeleteAchievementClass>("delete")
+                .WithDescription("Delete an achievement class and all achievements belonging to it");
+            config.AddCommand<ListAchievementClasses>("list")
+                .WithDescription("List one or more achievement classes");
+            config.AddCommand<UpdateAchievementClass>("update")
+                .WithDescription("Update an achievement class");
+        });
         config.AddCommand<ShowStatus>("status")
             .WithDescription("Shows status");
     }).RunConsoleAsync();
