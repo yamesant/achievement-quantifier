@@ -17,7 +17,8 @@ public sealed class AddAchievement(
         [Description("Specifies the name of the achievement class that the to-be-added achievement should belong to")]
         public string Name { get; init; } = string.Empty;
         [CommandOption("-d|--date")]
-        [Description("Specifies the completion date of the to-be-added achievement")]
+        [TypeConverter(typeof(DateOnlyTypeConverter))]
+        [Description("Specifies the completion date in dd/MM/yyyy format of the to-be-added achievement")]
         public DateOnly Date { get; init; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
         [CommandOption("-q|--quantity")]

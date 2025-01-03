@@ -22,7 +22,8 @@ public sealed class UpdateAchievement(
         public string Name { get; init; } = string.Empty;
 
         [CommandOption("-d|--date")]
-        [Description("Specifies the new completion date of the to-be-updated achievement")]
+        [TypeConverter(typeof(DateOnlyTypeConverter))]
+        [Description("Specifies the new completion date in dd/MM/yyyy format of the to-be-updated achievement")]
         public DateOnly Date { get; init; }
 
         [CommandOption("-q|--quantity")]
