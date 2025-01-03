@@ -1,11 +1,16 @@
 using System.ComponentModel;
+using AQ.Data;
+using AQ.Models;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace AQ.Console.Commands;
 
-public sealed class ListAchievementClasses(ILogger<ListAchievementClasses> logger) : AsyncCommand<ListAchievementClasses.Settings>
+public sealed class ListAchievementClasses(
+    ILogger<ListAchievementClasses> logger,
+    IRepository repository
+    ) : AsyncCommand<ListAchievementClasses.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -25,19 +30,34 @@ public sealed class ListAchievementClasses(ILogger<ListAchievementClasses> logge
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        List<AchievementClass> result = [];
         if (settings.Id.HasValue)
         {
-            logger.LogInformation($"Filtering on achievement class id '{settings.Id.Value}'");
+            AchievementClass? achievementClass = await repository.GetAchievementClassById(settings.Id.Value);
+            if (achievementClass != null && (settings.Name is null || settings.Name == achievementClass.Name))
+            {
+                result = [achievementClass];
+            }
         }
         else if (settings.Name != null)
         {
-            logger.LogInformation($"Filtering on achievement class name '{settings.Name}'");
+            AchievementClass? achievementClass = await repository.GetAchievementClassByName(settings.Name);
+            if (achievementClass != null)
+            {
+                result = [achievementClass];
+            }
         }
         else
         {
-            logger.LogInformation("Getting all achievement classes");
+            result = await repository.GetAllAchievementClasses();
         }
-        
+
+        logger.LogInformation($"Found {result.Count} achievement classes.");
+        foreach (AchievementClass achievementClass in result)
+        {
+            AnsiConsole.WriteLine(achievementClass.ToString());
+        }
+
         return 0;
     }
 }

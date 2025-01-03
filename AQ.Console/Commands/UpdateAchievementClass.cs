@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using AQ.Data;
 using AQ.Models;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
@@ -6,7 +7,10 @@ using Spectre.Console.Cli;
 
 namespace AQ.Console.Commands;
 
-public sealed class UpdateAchievementClass(ILogger<UpdateAchievementClass> logger) : AsyncCommand<UpdateAchievementClass.Settings>
+public sealed class UpdateAchievementClass(
+    ILogger<UpdateAchievementClass> logger,
+    IRepository repository
+    ) : AsyncCommand<UpdateAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -36,8 +40,14 @@ public sealed class UpdateAchievementClass(ILogger<UpdateAchievementClass> logge
             Name = settings.Name,
             Unit = settings.Unit,
         };
-        
-        logger.LogInformation($"Updated '{achievementClass}'.");
+        AchievementClass? result = await repository.Update(achievementClass);
+        if (result is null)
+        {
+            logger.LogError("Failed to update achievement class.");
+            return -1;
+        }
+
+        logger.LogInformation($"Updated '{result}'.");
         return 0;
     }
 }

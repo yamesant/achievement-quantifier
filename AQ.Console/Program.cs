@@ -1,4 +1,6 @@
 ﻿using AQ.Console.Commands;
+using AQ.Data;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Spectre.Console.Cli;
@@ -15,6 +17,10 @@ await Host.CreateDefaultBuilder(args)
         logging.AddFilter("Default", LogLevel.Information);
         logging.AddFilter("System", LogLevel.Warning);
         logging.AddFilter("Microsoft", LogLevel.Warning);
+    })
+    .ConfigureServices(services =>
+    {
+        services.AddSingleton<IRepository, Repository>();
     })
     .UseSpectreConsole(config =>
     {
