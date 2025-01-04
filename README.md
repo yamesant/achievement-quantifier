@@ -1,3 +1,5 @@
+# Description
+
 This is Achievement Quantifier - a .NET CLI tool for tracking and managing achievements.
 
 Define achievement classes:
@@ -32,3 +34,9 @@ Achievement { Id: 1, Class: Do programming, Quantity: 4 Unit: Git commits, Compl
 Achievement { Id: 2, Class: Do programming, Quantity: 1 Unit: Git commits, CompletedDate: 1/1/2025 }
 Achievement { Id: 3, Class: Do programming, Quantity: 2 Unit: Git commits, CompletedDate: 2/1/2025 }
 ```
+# Installation
+
+1. Clone the repository
+2. Move to `./AQ.Console` folder
+3. Make a NuGet package: `dotnet pack`
+4. Install as a global .NET CLI tool: `dotnet tool install AQ --global --add-source ./packages`
