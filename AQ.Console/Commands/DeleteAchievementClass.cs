@@ -1,5 +1,6 @@
 using System.ComponentModel;
-using AQ.Data;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -8,8 +9,8 @@ namespace AQ.Console.Commands;
 
 public sealed class DeleteAchievementClass(
     ILogger<DeleteAchievementClass> logger,
-    IRepository repository
-    ) : AsyncCommand<DeleteAchievementClass.Settings>
+    DataContext dataContext
+) : AsyncCommand<DeleteAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -25,7 +26,17 @@ public sealed class DeleteAchievementClass(
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        (int achievementClassesDeleted, int achievementsDeleted) = await repository.DeleteAchievementClass(settings.Id);
+        await dataContext.Database.BeginTransactionAsync();
+        int achievementsDeleted = await dataContext
+            .Achievements
+            .Where(achievement => achievement.AchievementClassId == settings.Id)
+            .ExecuteDeleteAsync();
+        int achievementClassesDeleted = await dataContext
+            .AchievementClasses
+            .Where(achievementClass => achievementClass.Id == settings.Id)
+            .ExecuteDeleteAsync();
+        await dataContext.Database.CommitTransactionAsync();
+        
         logger.LogInformation($"Deleted {achievementClassesDeleted} achievement classes and {achievementsDeleted} achievements.");
         return 0;
     }
