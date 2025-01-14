@@ -37,6 +37,8 @@ Achievement { Id: 3, Class: Do programming, Quantity: 2 Unit: Git commits, Compl
 # Installation
 
 1. Clone the repository
-2. Move to `./AQ.Console` folder
-3. Make a NuGet package: `dotnet pack`
-4. Install as a global .NET CLI tool: `dotnet tool install AQ --global --add-source ./packages`
+2. Set the environment: `export DOTNET_ENVIRONMENT=Production` (no environment set = production environment)
+3. Update the database: `dotnet ef database update -s AQ.Console -p AQ.Domain`
+4. Move to startup project folder: `cd AQ.Console`
+5. Make a NuGet package: `dotnet pack`
+6. Install as a global .NET CLI tool: `dotnet tool install AQ --global --add-source ./packages`
