@@ -1,5 +1,7 @@
 ﻿using AQ.Console.Commands;
 using AQ.Data;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,9 +20,20 @@ await Host.CreateDefaultBuilder(args)
         logging.AddFilter("System", LogLevel.Warning);
         logging.AddFilter("Microsoft", LogLevel.Warning);
     })
-    .ConfigureServices(services =>
+    .ConfigureServices((context, services) =>
     {
         services.AddSingleton<IRepository, Repository>();
+        services.AddDbContext<DataContext>(options =>
+        {
+            string dataSource = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "AQ",
+                context.HostingEnvironment.EnvironmentName,
+                "data.db");
+            Directory.CreateDirectory(Path.GetDirectoryName(dataSource)!);
+            string connectionString = $"Data Source={dataSource}";
+            options.UseSqlite(connectionString);
+        });
     })
     .UseSpectreConsole(config =>
     {
