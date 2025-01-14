@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AQ.Domain;
 
-public partial class DataContext : DbContext
+public class DataContext : DbContext
 {
     public DataContext()
     {
@@ -36,9 +34,5 @@ public partial class DataContext : DbContext
 
             entity.HasIndex(e => e.Name, "IX_AchievementClass_Name").IsUnique();
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

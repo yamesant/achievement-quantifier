@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AQ.Domain;
 
-namespace AQ.Domain;
-
-public partial class AchievementClass
+public class AchievementClass
 {
-    public int Id { get; set; }
-
+    public long Id { get; set; }
     public string Name { get; set; } = null!;
-
     public string Unit { get; set; } = null!;
-
     public virtual ICollection<Achievement> Achievements { get; set; } = new List<Achievement>();
+    public override string ToString() => $"{nameof(AchievementClass)} {{ Id: {Id}, Name: {Name}, Unit: {Unit} }}";
 }
