@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using AQ.Data;
-using AQ.Models;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -9,7 +9,8 @@ namespace AQ.Console.Commands;
 
 public sealed class ListAchievements(
     ILogger<ListAchievements> logger,
-    IRepository repository) : AsyncCommand<ListAchievements.Settings>
+    DataContext dataContext
+    ) : AsyncCommand<ListAchievements.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -30,11 +31,14 @@ public sealed class ListAchievements(
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        List<Achievement> achievements = new();
+        List<Achievement> achievements = [];
 
         if (settings.Id.HasValue)
         {
-            Achievement? achievement = await repository.GetAchievementById(settings.Id.Value);
+            Achievement? achievement = await dataContext
+                .Achievements
+                .Include(achievement => achievement.AchievementClass)
+                .FirstOrDefaultAsync(achievement => achievement.Id == settings.Id.Value);
             if (achievement != null && (settings.Name == null || settings.Name == achievement.AchievementClass.Name))
             {
                 achievements = [achievement];
@@ -42,11 +46,20 @@ public sealed class ListAchievements(
         }
         else if (settings.Name != null)
         {
-            achievements = await repository.GetAchievementsByClassName(settings.Name);
+            achievements = await dataContext
+                .Achievements
+                .Include(achievement => achievement.AchievementClass)
+                .Where(achievement => achievement.AchievementClass.Name == settings.Name)
+                .AsNoTracking()
+                .ToListAsync();
         }
         else
         {
-            achievements = await repository.GetAllAchievements();
+            achievements = await dataContext
+                .Achievements
+                .Include(achievement => achievement.AchievementClass)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         logger.LogInformation($"Found {achievements.Count} achievements.");

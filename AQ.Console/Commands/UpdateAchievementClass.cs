@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using AQ.Data;
-using AQ.Models;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -9,7 +9,7 @@ namespace AQ.Console.Commands;
 
 public sealed class UpdateAchievementClass(
     ILogger<UpdateAchievementClass> logger,
-    IRepository repository
+    DataContext dataContext
     ) : AsyncCommand<UpdateAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -34,20 +34,20 @@ public sealed class UpdateAchievementClass(
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        AchievementClass achievementClass = new()
+        AchievementClass? achievementClass = await dataContext
+            .AchievementClasses
+            .FirstOrDefaultAsync(achievementClass => achievementClass.Id == settings.Id);
+        if (achievementClass is null)
         {
-            Id = settings.Id,
-            Name = settings.Name,
-            Unit = settings.Unit,
-        };
-        AchievementClass? result = await repository.Update(achievementClass);
-        if (result is null)
-        {
-            logger.LogError("Failed to update achievement class.");
+            logger.LogError($"Achievement class with id {settings.Id} not found.");
             return -1;
         }
 
-        logger.LogInformation($"Updated '{result}'.");
+        achievementClass.Name = settings.Name;
+        achievementClass.Unit = settings.Unit;
+        await dataContext.SaveChangesAsync();
+
+        logger.LogInformation($"Updated '{achievementClass}'.");
         return 0;
     }
 }

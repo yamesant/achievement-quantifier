@@ -1,5 +1,4 @@
 ﻿using AQ.Console.Commands;
-using AQ.Data;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +21,6 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((context, services) =>
     {
-        services.AddSingleton<IRepository, Repository>();
         services.AddDbContext<DataContext>(options =>
         {
             string dataSource = Path.Combine(

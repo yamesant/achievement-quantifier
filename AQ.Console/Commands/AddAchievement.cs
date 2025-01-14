@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using AQ.Data;
-using AQ.Models;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -9,7 +9,8 @@ namespace AQ.Console.Commands;
 
 public sealed class AddAchievement(
     ILogger<AddAchievement> logger,
-    IRepository repository) : AsyncCommand<AddAchievement.Settings>
+    DataContext dataContext
+    ) : AsyncCommand<AddAchievement.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -36,21 +37,28 @@ public sealed class AddAchievement(
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        AchievementClass? achievementClass = await repository.GetAchievementClassByName(settings.Name);
+        AchievementClass? achievementClass = await dataContext
+            .AchievementClasses
+            .FirstOrDefaultAsync(achievementClass => achievementClass.Name == settings.Name);
         if (achievementClass is null)
         {
             logger.LogError($"Achievement class with name {settings.Name} not found.");
             return -1;
         }
+
         Achievement achievement = new()
         {
             AchievementClass = achievementClass,
-            CompletedDate = settings.Date,
+            CompletedDate = settings.Date.ToString(),
             Quantity = settings.Quantity
         };
 
-        Achievement? result = await repository.Insert(achievement);
-        logger.LogInformation($"Added achievement: {result}.");
+        dataContext
+            .Achievements
+            .Add(achievement);
+        await dataContext.SaveChangesAsync();
+        
+        logger.LogInformation($"Added achievement: {achievement}.");
         return 0;
     }
 }

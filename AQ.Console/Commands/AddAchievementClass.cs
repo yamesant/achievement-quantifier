@@ -1,6 +1,5 @@
 using System.ComponentModel;
-using AQ.Data;
-using AQ.Models;
+using AQ.Domain;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -9,8 +8,8 @@ namespace AQ.Console.Commands;
 
 public sealed class AddAchievementClass(
     ILogger<AddAchievementClass> logger,
-    IRepository repository
-    ) : AsyncCommand<AddAchievementClass.Settings>
+    DataContext dataContext
+) : AsyncCommand<AddAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -35,12 +34,10 @@ public sealed class AddAchievementClass(
             Name = settings.Name,
             Unit = settings.Unit,
         };
-        AchievementClass? result = await repository.Insert(achievementClass);
-        if (result is null)
-        {
-            logger.LogError("Failed to add achievement class.");
-            return -1;
-        }
+        dataContext
+            .AchievementClasses
+            .Add(achievementClass);
+        await dataContext.SaveChangesAsync();
 
         logger.LogInformation($"Added '{achievementClass}'.");
         return 0;

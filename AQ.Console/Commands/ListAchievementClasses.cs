@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using AQ.Data;
-using AQ.Models;
+using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -9,7 +9,7 @@ namespace AQ.Console.Commands;
 
 public sealed class ListAchievementClasses(
     ILogger<ListAchievementClasses> logger,
-    IRepository repository
+    DataContext dataContext
     ) : AsyncCommand<ListAchievementClasses.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -33,7 +33,9 @@ public sealed class ListAchievementClasses(
         List<AchievementClass> result = [];
         if (settings.Id.HasValue)
         {
-            AchievementClass? achievementClass = await repository.GetAchievementClassById(settings.Id.Value);
+            AchievementClass? achievementClass = await dataContext
+                .AchievementClasses
+                .FirstOrDefaultAsync(achievementClass => achievementClass.Id == settings.Id.Value);
             if (achievementClass != null && (settings.Name is null || settings.Name == achievementClass.Name))
             {
                 result = [achievementClass];
@@ -41,7 +43,9 @@ public sealed class ListAchievementClasses(
         }
         else if (settings.Name != null)
         {
-            AchievementClass? achievementClass = await repository.GetAchievementClassByName(settings.Name);
+            AchievementClass? achievementClass = await dataContext
+                .AchievementClasses
+                .FirstOrDefaultAsync(achievementClass => achievementClass.Name == settings.Name);
             if (achievementClass != null)
             {
                 result = [achievementClass];
@@ -49,7 +53,10 @@ public sealed class ListAchievementClasses(
         }
         else
         {
-            result = await repository.GetAllAchievementClasses();
+            result = await dataContext
+                .AchievementClasses
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         logger.LogInformation($"Found {result.Count} achievement classes.");
