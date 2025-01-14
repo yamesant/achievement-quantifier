@@ -24,9 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AQ.Data\AQ.Data.csproj" />
       <ProjectReference Include="..\AQ.Domain\AQ.Domain.csproj" />
-      <ProjectReference Include="..\AQ.Models\AQ.Models.csproj" />
     </ItemGroup>
 
 </Project>
