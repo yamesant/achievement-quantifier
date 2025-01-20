@@ -6,8 +6,8 @@ public class Achievement
 {
     public long Id { get; set; }
     public long AchievementClassId { get; set; }
-    public string CompletedDate { get; set; } = null!;
-    public int Quantity { get; set; }
+    public required DateOnly CompletedDate { get; set; }
+    public required int Quantity { get; set; }
     public virtual AchievementClass AchievementClass { get; set; } = null!;
     public override string ToString()
     {
@@ -19,7 +19,7 @@ public class Achievement
             .Append(AchievementClass.Name)
             .Append(", Quantity: ")
             .Append(Quantity)
-            .Append(" Unit: ")
+            .Append(", Unit: ")
             .Append(AchievementClass.Unit)
             .Append(", CompletedDate: ")
             .Append(CompletedDate)

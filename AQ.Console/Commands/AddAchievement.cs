@@ -49,7 +49,7 @@ public sealed class AddAchievement(
         Achievement achievement = new()
         {
             AchievementClass = achievementClass,
-            CompletedDate = settings.Date.ToString(),
+            CompletedDate = settings.Date,
             Quantity = settings.Quantity
         };
 
