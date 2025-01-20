@@ -53,7 +53,7 @@ public sealed class UpdateAchievement(
             return -1;
         }
 
-        achievement.CompletedDate = settings.Date.ToString() ?? "";
+        achievement.CompletedDate = settings.Date!.Value;
         achievement.Quantity = settings.Quantity!.Value;
         
         if (achievement.AchievementClass.Name != settings.Name)

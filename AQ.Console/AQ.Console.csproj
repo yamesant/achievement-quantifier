@@ -9,7 +9,7 @@
         <ToolCommandName>aq</ToolCommandName>
         <PackageOutputPath>./packages</PackageOutputPath>
         <PackageId>AQ</PackageId>
-        <Version>0.2.0</Version>
+        <Version>0.2.1</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
