@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace AQ.Console.Commands;
+namespace AQ.Console.Commands.AchievementClassCommands;
 
 public sealed class AddAchievementClass(
     ILogger<AddAchievementClass> logger,

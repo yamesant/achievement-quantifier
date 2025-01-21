@@ -1,4 +1,6 @@
 ﻿using AQ.Console.Commands;
+using AQ.Console.Commands.AchievementClassCommands;
+using AQ.Console.Commands.AchievementCommands;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
