@@ -1,15 +1,13 @@
 using System.ComponentModel;
 using AQ.Domain;
-using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace AQ.Console.Commands.AchievementClassCommands;
 
 public sealed class AddAchievementClass(
-    ILogger<AddAchievementClass> logger,
     DataContext dataContext
-) : AsyncCommand<AddAchievementClass.Settings>
+    ) : AsyncCommand<AddAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
     {
@@ -39,7 +37,7 @@ public sealed class AddAchievementClass(
             .Add(achievementClass);
         await dataContext.SaveChangesAsync();
 
-        logger.LogInformation($"Added '{achievementClass}'.");
+        AnsiConsole.WriteLine($"Added '{achievementClass}'.");
         return 0;
     }
 }

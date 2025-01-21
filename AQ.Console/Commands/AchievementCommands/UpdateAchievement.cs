@@ -1,14 +1,12 @@
 using System.ComponentModel;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class UpdateAchievement(
-    ILogger<UpdateAchievement> logger,
     DataContext dataContext
     ) : AsyncCommand<UpdateAchievement.Settings>
 {
@@ -49,7 +47,7 @@ public sealed class UpdateAchievement(
             .FirstOrDefaultAsync(achievement => achievement.Id == settings.Id);
         if (achievement is null)
         {
-            logger.LogError($"Achievement with id {settings.Id} not found.");
+            AnsiConsole.WriteLine($"Achievement with id {settings.Id} not found.");
             return -1;
         }
 
@@ -63,7 +61,7 @@ public sealed class UpdateAchievement(
                 .FirstOrDefaultAsync(achievementClass => achievementClass.Name == settings.Name);
             if (achievementClass is null)
             {
-                logger.LogError($"Achievement class with name {settings.Name} not found.");
+                AnsiConsole.WriteLine($"Achievement class with name {settings.Name} not found.");
                 return -1;
             }
 
@@ -72,7 +70,7 @@ public sealed class UpdateAchievement(
 
         await dataContext.SaveChangesAsync();
         
-        logger.LogInformation($"Updated achievement: {achievement}.");
+        AnsiConsole.WriteLine($"Updated achievement: {achievement}.");
         return 0;
     }
 }

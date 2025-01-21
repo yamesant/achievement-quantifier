@@ -13,13 +13,7 @@ await Host.CreateDefaultBuilder(args)
     .UseConsoleLifetime()
     .ConfigureLogging(logging =>
     {
-        logging.ClearProviders();
-        logging.AddConsole();
-        logging.SetMinimumLevel(LogLevel.Information);
-    
-        logging.AddFilter("Default", LogLevel.Information);
-        logging.AddFilter("System", LogLevel.Warning);
-        logging.AddFilter("Microsoft", LogLevel.Warning);
+        logging.SetMinimumLevel(LogLevel.Error);
     })
     .ConfigureServices((context, services) =>
     {

@@ -1,14 +1,12 @@
 using System.ComponentModel;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class ListAchievements(
-    ILogger<ListAchievements> logger,
     DataContext dataContext
     ) : AsyncCommand<ListAchievements.Settings>
 {
@@ -62,7 +60,7 @@ public sealed class ListAchievements(
                 .ToListAsync();
         }
 
-        logger.LogInformation($"Found {achievements.Count} achievements.");
+        AnsiConsole.WriteLine($"Found {achievements.Count} achievements.");
         foreach (Achievement achievement in achievements)
         {
             AnsiConsole.WriteLine(achievement.ToString());
