@@ -6,7 +6,8 @@ using Spectre.Console.Cli;
 namespace AQ.Console.Commands.AchievementClassCommands;
 
 public sealed class AddAchievementClass(
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<AddAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -37,7 +38,7 @@ public sealed class AddAchievementClass(
             .Add(achievementClass);
         await dataContext.SaveChangesAsync();
 
-        AnsiConsole.WriteLine($"Added '{achievementClass}'.");
+        console.WriteLine($"Added '{achievementClass}'.");
         return 0;
     }
 }

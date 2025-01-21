@@ -7,7 +7,8 @@ using Spectre.Console.Cli;
 namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class ListAchievements(
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<ListAchievements.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -60,10 +61,10 @@ public sealed class ListAchievements(
                 .ToListAsync();
         }
 
-        AnsiConsole.WriteLine($"Found {achievements.Count} achievements.");
+        console.WriteLine($"Found {achievements.Count} achievements.");
         foreach (Achievement achievement in achievements)
         {
-            AnsiConsole.WriteLine(achievement.ToString());
+            console.WriteLine(achievement.ToString());
         }
 
         return 0;

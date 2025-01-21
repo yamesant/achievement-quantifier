@@ -7,7 +7,8 @@ using Spectre.Console.Cli;
 namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class UpdateAchievement(
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<UpdateAchievement.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -47,7 +48,7 @@ public sealed class UpdateAchievement(
             .FirstOrDefaultAsync(achievement => achievement.Id == settings.Id);
         if (achievement is null)
         {
-            AnsiConsole.WriteLine($"Achievement with id {settings.Id} not found.");
+            console.WriteLine($"Achievement with id {settings.Id} not found.");
             return -1;
         }
 
@@ -61,7 +62,7 @@ public sealed class UpdateAchievement(
                 .FirstOrDefaultAsync(achievementClass => achievementClass.Name == settings.Name);
             if (achievementClass is null)
             {
-                AnsiConsole.WriteLine($"Achievement class with name {settings.Name} not found.");
+                console.WriteLine($"Achievement class with name {settings.Name} not found.");
                 return -1;
             }
 
@@ -70,7 +71,7 @@ public sealed class UpdateAchievement(
 
         await dataContext.SaveChangesAsync();
         
-        AnsiConsole.WriteLine($"Updated achievement: {achievement}.");
+        console.WriteLine($"Updated achievement: {achievement}.");
         return 0;
     }
 }

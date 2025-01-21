@@ -7,7 +7,8 @@ using Spectre.Console.Cli;
 namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class DeleteAchievement(
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<DeleteAchievement.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -29,7 +30,7 @@ public sealed class DeleteAchievement(
             .Achievements
             .Where(achievement => achievement.Id == settings.Id)
             .ExecuteDeleteAsync();
-        AnsiConsole.WriteLine($"Deleted {achievementsDeleted} achievements.");
+        console.WriteLine($"Deleted {achievementsDeleted} achievements.");
         return 0;
     }
 }
