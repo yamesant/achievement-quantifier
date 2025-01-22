@@ -1,4 +1,6 @@
 ﻿using AQ.Console.Commands;
+using AQ.Console.Commands.AchievementClassCommands;
+using AQ.Console.Commands.AchievementCommands;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,16 +13,11 @@ await Host.CreateDefaultBuilder(args)
     .UseConsoleLifetime()
     .ConfigureLogging(logging =>
     {
-        logging.ClearProviders();
-        logging.AddConsole();
-        logging.SetMinimumLevel(LogLevel.Information);
-    
-        logging.AddFilter("Default", LogLevel.Information);
-        logging.AddFilter("System", LogLevel.Warning);
-        logging.AddFilter("Microsoft", LogLevel.Warning);
+        logging.SetMinimumLevel(LogLevel.Error);
     })
     .ConfigureServices((context, services) =>
     {
+        services.AddSingleton(TimeProvider.System);
         services.AddDbContext<DataContext>(options =>
         {
             string dataSource = Path.Combine(

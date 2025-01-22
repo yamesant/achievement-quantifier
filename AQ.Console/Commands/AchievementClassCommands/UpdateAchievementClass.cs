@@ -1,45 +1,52 @@
 using System.ComponentModel;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace AQ.Console.Commands;
+namespace AQ.Console.Commands.AchievementClassCommands;
 
 public sealed class UpdateAchievementClass(
-    ILogger<UpdateAchievementClass> logger,
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<UpdateAchievementClass.Settings>
 {
     public sealed class Settings : CommandSettings
     {
         [CommandOption("--id")]
         [Description("Specifies the id of the to-be-updated achievement class")]
-        public long Id { get; init; }
+        public long? Id { get; init; }
         [CommandOption("-n|--name")]
         [Description("Specifies the new name of the to-be-updated achievement class")]
-        public string Name { get; init; } = string.Empty;
+        public string? Name { get; init; }
         [CommandOption("-u|--unit")]
         [Description("Specifies the new unit of the to-be-updated achievement class")]
-        public string Unit { get; init; } = string.Empty;
-        public override ValidationResult Validate()
-        {
-            if (Id <= 0) return ValidationResult.Error("Id must be greater than 0");
-            if (Name.Length < 2) return ValidationResult.Error("Name must be at least 2 characters long.");
-            if (Unit.Length == 0) return ValidationResult.Error("Unit must be a non-empty string.");
-            return ValidationResult.Success();
-        }
+        public string? Unit { get; init; }
     }
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Id is null or <= 0)
+        {
+            throw new ArgumentException("Id must be greater than 0", nameof(settings.Id));
+        }
+        
+        if (settings.Name is null || settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long", nameof(settings.Name));
+        }
+        
+        if (settings.Unit is null || settings.Unit.Length == 0)
+        {
+            throw new ArgumentException("Unit must be a non-empty string", nameof(settings.Unit));
+        }
+        
         AchievementClass? achievementClass = await dataContext
             .AchievementClasses
             .FirstOrDefaultAsync(achievementClass => achievementClass.Id == settings.Id);
         if (achievementClass is null)
         {
-            logger.LogError($"Achievement class with id {settings.Id} not found.");
+            console.WriteLine($"Achievement class with id {settings.Id} not found.");
             return -1;
         }
 
@@ -47,7 +54,7 @@ public sealed class UpdateAchievementClass(
         achievementClass.Unit = settings.Unit;
         await dataContext.SaveChangesAsync();
 
-        logger.LogInformation($"Updated '{achievementClass}'.");
+        console.WriteLine($"Updated '{achievementClass}'.");
         return 0;
     }
 }

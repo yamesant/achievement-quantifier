@@ -1,15 +1,14 @@
 using System.ComponentModel;
 using AQ.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace AQ.Console.Commands;
+namespace AQ.Console.Commands.AchievementClassCommands;
 
 public sealed class ListAchievementClasses(
-    ILogger<ListAchievementClasses> logger,
-    DataContext dataContext
+    DataContext dataContext,
+    IAnsiConsole console
     ) : AsyncCommand<ListAchievementClasses.Settings>
 {
     public sealed class Settings : CommandSettings
@@ -20,16 +19,20 @@ public sealed class ListAchievementClasses(
         [CommandOption("-n|--name")]
         [Description("(Optional) Specifies the name on which to filter achievement classes")]
         public string? Name { get; init; }
-        public override ValidationResult Validate()
-        {
-            if (Id is 0) return ValidationResult.Error("Id must be greater than 0");
-            if (Name is { Length: < 2 }) return ValidationResult.Error("Name must be at least 2 characters long.");
-            return ValidationResult.Success();
-        }
     }
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Id is not null && settings.Id <= 0)
+        {
+            throw new ArgumentException("Id must be greater than 0", nameof(settings.Id));
+        }
+
+        if (settings.Name is not null && settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long.", nameof(settings.Name));
+        }
+        
         List<AchievementClass> result = [];
         if (settings.Id.HasValue)
         {
@@ -59,10 +62,10 @@ public sealed class ListAchievementClasses(
                 .ToListAsync();
         }
 
-        logger.LogInformation($"Found {result.Count} achievement classes.");
+        console.WriteLine($"Found {result.Count} achievement classes.");
         foreach (AchievementClass achievementClass in result)
         {
-            AnsiConsole.WriteLine(achievementClass.ToString());
+            console.WriteLine(achievementClass.ToString());
         }
 
         return 0;
