@@ -5,7 +5,6 @@ namespace AQ.Tests.Commands.AchievementCommands;
 
 public class ListAchievementsTests : DbTestsBase
 {
-    private readonly DataContext _dataContext;
     private readonly ListAchievements _command;
     private readonly AchievementClass _achievementClass1;
     private readonly AchievementClass _achievementClass2;
@@ -13,8 +12,8 @@ public class ListAchievementsTests : DbTestsBase
 
     public ListAchievementsTests()
     {
-        _dataContext = CreateDataContext();
-        _command = new(_dataContext, Console);
+        DataContext dataContext = CreateDataContext();
+        _command = new(dataContext, Console);
 
         IFixture fixture = new Fixture().Customize(new DefaultCustomization());
         _achievements = fixture.CreateMany<Achievement>(3).ToArray();
@@ -23,8 +22,8 @@ public class ListAchievementsTests : DbTestsBase
         _achievements[0].AchievementClass = _achievementClass1;
         _achievements[1].AchievementClass = _achievementClass1;
         _achievements[2].AchievementClass = _achievementClass2;
-        _dataContext.Achievements.AddRange(_achievements);
-        _dataContext.SaveChanges();
+        dataContext.Achievements.AddRange(_achievements);
+        dataContext.SaveChanges();
     }
 
     [Fact]

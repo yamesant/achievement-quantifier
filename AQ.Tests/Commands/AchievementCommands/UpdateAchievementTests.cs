@@ -51,7 +51,7 @@ public class UpdateAchievementTests : DbTestsBase
         Assert.Contains(updated.ToString().RemoveWhitespace(), Console.Output.RemoveWhitespace());
     }
     
-        [Theory, DefaultAutoData]
+    [Theory, DefaultAutoData]
     public async Task ShouldFailWhenIdIsNotProvided(DateOnly date, int quantity)
     {
         // Arrange
