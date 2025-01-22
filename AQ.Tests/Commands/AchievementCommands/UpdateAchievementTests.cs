@@ -50,4 +50,72 @@ public class UpdateAchievementTests : DbTestsBase
         Assert.NotNull(updated);
         Assert.Contains(updated.ToString().RemoveWhitespace(), Console.Output.RemoveWhitespace());
     }
+    
+        [Theory, DefaultAutoData]
+    public async Task ShouldFailWhenIdIsNotProvided(DateOnly date, int quantity)
+    {
+        // Arrange
+        UpdateAchievement.Settings settings = new()
+        {
+            Id = null,
+            Name = _achievement.AchievementClass.Name,
+            Date = date,
+            Quantity = quantity,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task ShouldFailWhenNameIsNotProvided(DateOnly date, int quantity)
+    {
+        // Arrange
+        UpdateAchievement.Settings settings = new()
+        {
+            Id = _achievement.Id,
+            Name = null,
+            Date = date,
+            Quantity = quantity,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task ShouldFailWhenDateIsNotProvided(int quantity)
+    {
+        // Arrange
+        UpdateAchievement.Settings settings = new()
+        {
+            Id = _achievement.Id,
+            Name = _achievement.AchievementClass.Name,
+            Date = null,
+            Quantity = quantity,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task ShouldFailWhenQuantityIsNotProvided(DateOnly date)
+    {
+        // Arrange
+        UpdateAchievement.Settings settings = new()
+        {
+            Id = _achievement.Id,
+            Name = _achievement.AchievementClass.Name,
+            Date = date,
+            Quantity = null
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
 }

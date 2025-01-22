@@ -8,34 +8,40 @@ namespace AQ.Console.Commands.AchievementCommands;
 
 public sealed class AddAchievement(
     DataContext dataContext,
-    IAnsiConsole console
+    IAnsiConsole console,
+    TimeProvider timeProvider
     ) : AsyncCommand<AddAchievement.Settings>
 {
     public sealed class Settings : CommandSettings
     {
         [CommandOption("-n|--name")]
         [Description("Specifies the name of the achievement class that the to-be-added achievement should belong to")]
-        public string Name { get; init; } = string.Empty;
+        public string? Name { get; init; }
         [CommandOption("-d|--date")]
         [TypeConverter(typeof(DateOnlyTypeConverter))]
         [Description("Specifies the completion date in dd/MM/yyyy format of the to-be-added achievement")]
-        public DateOnly Date { get; init; } = DateOnly.FromDateTime(DateTime.UtcNow);
+        public DateOnly? Date { get; set; }
 
         [CommandOption("-q|--quantity")]
         [Description("Specifies the quantity of the to-be-added achievement")]
-        [DefaultValue(1)]
-        public int Quantity { get; init; }
-
-        public override ValidationResult Validate()
-        {
-            if (Name.Length < 2) return ValidationResult.Error("Name must be at least 2 characters long.");
-            if (Quantity <= 0) return ValidationResult.Error("Quantity must be greater than 0.");
-            return ValidationResult.Success();
-        }
+        public int? Quantity { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Name is null || settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long", nameof(settings.Name));
+        }
+
+        if (settings.Quantity is not null && settings.Quantity <= 0)
+        {
+            throw new ArgumentException("Quantity must be greater than 0", nameof(settings.Quantity));
+        }
+
+        settings.Date ??= DateOnly.FromDateTime(timeProvider.GetUtcNow().Date);
+        settings.Quantity ??= 1;
+        
         AchievementClass? achievementClass = await dataContext
             .AchievementClasses
             .FirstOrDefaultAsync(achievementClass => achievementClass.Name == settings.Name);
@@ -48,8 +54,8 @@ public sealed class AddAchievement(
         Achievement achievement = new()
         {
             AchievementClass = achievementClass,
-            CompletedDate = settings.Date,
-            Quantity = settings.Quantity
+            CompletedDate = settings.Date.Value,
+            Quantity = settings.Quantity.Value,
         };
 
         dataContext

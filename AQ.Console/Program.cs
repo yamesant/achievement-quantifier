@@ -17,6 +17,7 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((context, services) =>
     {
+        services.AddSingleton(TimeProvider.System);
         services.AddDbContext<DataContext>(options =>
         {
             string dataSource = Path.Combine(

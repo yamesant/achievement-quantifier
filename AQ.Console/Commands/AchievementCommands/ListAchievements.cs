@@ -20,16 +20,20 @@ public sealed class ListAchievements(
         [CommandOption("-n|--name")]
         [Description("(Optional) Specifies the class name on which to filter achievements")]
         public string? Name { get; init; }
-        public override ValidationResult Validate()
-        {
-            if (Id is 0) return ValidationResult.Error("Id must be greater than 0");
-            if (Name is { Length: < 2 }) return ValidationResult.Error("Name must be at least 2 characters long.");
-            return ValidationResult.Success();
-        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Id is not null && settings.Id <= 0)
+        {
+            throw new ArgumentException("Id must be greater than 0", nameof(settings.Id));
+        }
+
+        if (settings.Name is not null && settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long.", nameof(settings.Name));
+        }
+        
         List<Achievement> achievements = [];
 
         if (settings.Id.HasValue)

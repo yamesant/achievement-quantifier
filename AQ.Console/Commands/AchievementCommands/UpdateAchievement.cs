@@ -19,7 +19,7 @@ public sealed class UpdateAchievement(
 
         [CommandOption("-n|--name")]
         [Description("Specify the new name of the to-be-updated achievement")]
-        public string? Name { get; init; } = string.Empty;
+        public string? Name { get; init; }
 
         [CommandOption("-d|--date")]
         [TypeConverter(typeof(DateOnlyTypeConverter))]
@@ -29,19 +29,30 @@ public sealed class UpdateAchievement(
         [CommandOption("-q|--quantity")]
         [Description("Specifies the new quantity of the to-be-updated achievement")]
         public int? Quantity { get; init; }
-
-        public override ValidationResult Validate()
-        {
-            if (Id is null or <= 0) return ValidationResult.Error("Id must be greater than 0.");
-            if (Name is null || Name.Length < 2) return ValidationResult.Error("Name must be at least 2 characters long.");
-            if (Date is null) return ValidationResult.Error("Date must be provided.");
-            if (Quantity is null or <= 0) return ValidationResult.Error("Quantity must be greater than 0.");
-            return ValidationResult.Success();
-        }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Id is null or <= 0)
+        {
+            throw new ArgumentException("Id must be greater than 0", nameof(settings.Id));
+        }
+        
+        if (settings.Name is null || settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long", nameof(settings.Name));
+        }
+        
+        if (settings.Date is null)
+        {
+            throw new ArgumentException("Date must be provided", nameof(settings.Quantity));
+        }
+        
+        if (settings.Quantity is null or <= 0)
+        {
+            throw new ArgumentException("Quantity must be greater than 0", nameof(settings.Quantity));
+        }
+        
         Achievement? achievement = await dataContext
             .Achievements
             .Include(achievement => achievement.AchievementClass)

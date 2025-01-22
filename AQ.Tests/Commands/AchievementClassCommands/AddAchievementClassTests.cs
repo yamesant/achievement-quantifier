@@ -35,4 +35,34 @@ public class AddAchievementClassTests : DbTestsBase
         Assert.NotNull(achievementClass);
         Assert.Contains(achievementClass.ToString().RemoveWhitespace(), Console.Output.RemoveWhitespace());
     }
+    
+    [Theory, AutoData]
+    public async Task ShouldFailWhenNameIsNotProvided(string unit)
+    {
+        // Arrange
+        AddAchievementClass.Settings settings = new()
+        {
+            Name = null,
+            Unit = unit,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, AutoData]
+    public async Task ShouldFailWhenUnitIsNotProvided(string name)
+    {
+        // Arrange
+        AddAchievementClass.Settings settings = new()
+        {
+            Name = name,
+            Unit = null,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
 }

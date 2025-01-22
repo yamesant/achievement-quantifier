@@ -41,4 +41,52 @@ public class UpdateAchievementClassTests : DbTestsBase
         Assert.NotNull(updated);
         Assert.Contains(updated.ToString().RemoveWhitespace(), Console.Output.RemoveWhitespace());
     }
+    
+    [Theory, AutoData]
+    public async Task ShouldFailWhenIdIsNotProvided(string name, string unit)
+    {
+        // Arrange
+        UpdateAchievementClass.Settings settings = new()
+        {
+            Id = null,
+            Name = name,
+            Unit = unit,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, AutoData]
+    public async Task ShouldFailWhenNameIsNotProvided(int id, string unit)
+    {
+        // Arrange
+        UpdateAchievementClass.Settings settings = new()
+        {
+            Id = id,
+            Name = null,
+            Unit = unit,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, AutoData]
+    public async Task ShouldFailWhenUnitIsNotProvided(int id, string name)
+    {
+        // Arrange
+        UpdateAchievementClass.Settings settings = new()
+        {
+            Id = id,
+            Name = name,
+            Unit = null,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
 }

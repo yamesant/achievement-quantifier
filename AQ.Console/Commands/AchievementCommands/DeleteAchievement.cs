@@ -15,17 +15,16 @@ public sealed class DeleteAchievement(
     {
         [CommandOption("--id")]
         [Description("Specifies the id of the to-be-deleted achievement")]
-        public long Id { get; init; }
-
-        public override ValidationResult Validate()
-        {
-            if (Id <= 0) return ValidationResult.Error("Id must be greater than 0.");
-            return ValidationResult.Success();
-        }
+        public long? Id { get; init; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Id is null or <= 0)
+        {
+            throw new ArgumentException("Id must be greater than 0", nameof(settings.Id));
+        }
+        
         int achievementsDeleted = await dataContext
             .Achievements
             .Where(achievement => achievement.Id == settings.Id)

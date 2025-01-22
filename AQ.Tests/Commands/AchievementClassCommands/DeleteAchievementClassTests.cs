@@ -77,4 +77,18 @@ public class DeleteAchievementClassTests : DbTestsBase
         Assert.Equal(0, result);
         Assert.Equal("Deleted 0 achievement classes and 0 achievements.\n", Console.Output);
     }
+    
+    [Fact]
+    public async Task ShouldFailWhenIdIsNotProvided()
+    {
+        // Arrange
+        DeleteAchievementClass.Settings settings = new()
+        {
+            Id = null,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
 }

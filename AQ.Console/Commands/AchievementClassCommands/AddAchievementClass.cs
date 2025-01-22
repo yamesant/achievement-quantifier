@@ -14,20 +14,24 @@ public sealed class AddAchievementClass(
     {
         [CommandOption("-n|--name")]
         [Description("Specifies the name of the to-be-added achievement class")]
-        public string Name { get; init; } = string.Empty;
+        public string? Name { get; init; }
         [CommandOption("-u|--unit")]
         [Description("Specifies the unit of the to-be-added achievement class")]
-        public string Unit { get; init; } = string.Empty;
-        public override ValidationResult Validate()
-        {
-            if (Name.Length < 2) return ValidationResult.Error("Name must be at least 2 characters long.");
-            if (Unit.Length == 0) return ValidationResult.Error("Unit must be a non-empty string.");
-            return ValidationResult.Success();
-        }
+        public string? Unit { get; init; }
     }
     
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+        if (settings.Name is null || settings.Name.Length < 2)
+        {
+            throw new ArgumentException("Name must be at least 2 characters long", nameof(settings.Name));
+        }
+        
+        if (settings.Unit is null || settings.Unit.Length == 0)
+        {
+            throw new ArgumentException("Unit must be a non-empty string", nameof(settings.Unit));
+        }
+        
         AchievementClass achievementClass = new()
         {
             Name = settings.Name,
