@@ -12,9 +12,16 @@ public sealed class ShowStats(
     public override async Task<int> ExecuteAsync(CommandContext context, EmptyCommandSettings settings)
     {
         SummaryStatisticsSnapshot snapshot = await reportingService.GetSummaryStatisticsSnapshot();
-        console.WriteLine(snapshot.TodayCompletionCount.ToString());
-        console.WriteLine(snapshot.YesterdayCompletionCount.ToString());
-        console.WriteLine(snapshot.PastSevenDaysCompletionCount.ToString());
+        Table table = new()
+        {
+            Border = TableBorder.Square
+        };
+        table.AddColumn("Statistic");
+        table.AddColumn("Value");
+        table.AddRow("Achievements Completed Today", snapshot.TodayCompletionCount.ToString());
+        table.AddRow("Achievements Completed Yesterday", snapshot.YesterdayCompletionCount.ToString());
+        table.AddRow("Achievements Completed Past 7 Days", snapshot.PastSevenDaysCompletionCount.ToString());
+        console.Write(table);
         return 0;
     }
 }
