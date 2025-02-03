@@ -1,4 +1,5 @@
 ﻿using AQ.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace AQ.Services;
 
@@ -14,8 +15,18 @@ public class ReportingService(
 {
     public async Task<SummaryStatisticsSnapshot> GetSummaryStatisticsSnapshot()
     {
-        SummaryStatisticsSnapshot result = new(1, 2, 3);
-        return await Task.FromResult(result);
+        DateOnly today = DateOnly.FromDateTime(timeProvider.GetUtcNow().Date);
+        DateOnly yesterday = today.AddDays(-1);
+        DateOnly reportingDateStart = today.AddDays(-6);
+        Dictionary<DateOnly, int> counts = await context.Achievements
+            .Where(a => a.CompletedDate >= reportingDateStart)
+            .GroupBy(a => a.CompletedDate)
+            .ToDictionaryAsync(group => group.Key, group => group.Sum(a => a.Quantity));
+        SummaryStatisticsSnapshot result = new(
+            counts.GetValueOrDefault(today, 0), 
+            counts.GetValueOrDefault(yesterday, 0), 
+            counts.Values.Sum());
+        return result;
     }
 }
 
