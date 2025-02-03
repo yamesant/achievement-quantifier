@@ -25,6 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AQ.Domain\AQ.Domain.csproj" />
+      <ProjectReference Include="..\AQ.Services\AQ.Services.csproj" />
     </ItemGroup>
 
 </Project>
