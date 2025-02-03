@@ -1,11 +1,16 @@
-﻿namespace AQ.Services;
+﻿using AQ.Domain;
+
+namespace AQ.Services;
 
 public interface IReportingService
 {
     Task<SummaryStatisticsSnapshot> GetSummaryStatisticsSnapshot();
 }
 
-public class ReportingService : IReportingService
+public class ReportingService(
+    DataContext context,
+    TimeProvider timeProvider
+    ) : IReportingService
 {
     public async Task<SummaryStatisticsSnapshot> GetSummaryStatisticsSnapshot()
     {
