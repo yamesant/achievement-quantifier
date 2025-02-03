@@ -4,14 +4,14 @@ This is Achievement Quantifier - a .NET CLI tool for tracking and managing achie
 
 Define achievement classes:
 
-```shell
+```txt
 > aq class add -n "Do programming" -u "Git commits"
 Added 'AchievementClass { Id: 1, Name: Do programming, Unit: Git commits }'.
 ```
 
 Log achievements with custom quantities and arbitrary dates:
 
-```shell
+```txt
 > aq achievement add -n "Do programming" -q 4 -d "31/12/2024"
 Added achievement: Achievement { Id: 1, Class: Do programming, Quantity: 4, Unit: Git commits, CompletedDate: 31/12/2024 }.
 > aq achievement add -n "Do programming" -d "01/01/2025" 
@@ -22,13 +22,17 @@ Added achievement: Achievement { Id: 3, Class: Do programming, Quantity: 2, Unit
 
 View the progress:
 
-```shell
-> aq achievement list
-Found 3 achievements.
-Achievement { Id: 1, Class: Do programming, Quantity: 4, Unit: Git commits, CompletedDate: 31/12/2024 }
-Achievement { Id: 2, Class: Do programming, Quantity: 1, Unit: Git commits, CompletedDate: 1/1/2025 }
-Achievement { Id: 3, Class: Do programming, Quantity: 2, Unit: Git commits, CompletedDate: 2/1/2025 }
+```txt
+> aq stats
+┌────────────────────────────────────┬───────┐
+│ Statistic                          │ Value │
+├────────────────────────────────────┼───────┤
+│ Achievements Completed Today       │ 6     │
+│ Achievements Completed Yesterday   │ 13    │
+│ Achievements Completed Past 7 Days │ 42    │
+└────────────────────────────────────┴───────┘
 ```
+
 # Installation
 
 1. Clone the repository
