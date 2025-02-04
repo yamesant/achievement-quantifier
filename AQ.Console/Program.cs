@@ -2,6 +2,7 @@
 using AQ.Console.Commands.AchievementClassCommands;
 using AQ.Console.Commands.AchievementCommands;
 using AQ.Domain;
+using AQ.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +19,7 @@ await Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
         services.AddSingleton(TimeProvider.System);
+        services.AddTransient<IReportingService, ReportingService>();
         services.AddDbContext<DataContext>(options =>
         {
             string dataSource = Path.Combine(
@@ -59,4 +61,6 @@ await Host.CreateDefaultBuilder(args)
         });
         config.AddCommand<ShowStatus>("status")
             .WithDescription("Shows status");
+        config.AddCommand<ShowStats>("stats")
+            .WithDescription("Shows summary statistics for today, yesterday, and past week");
     }).RunConsoleAsync();
