@@ -21,7 +21,8 @@ public class ReportingService(
         Dictionary<DateOnly, int> counts = await context.Achievements
             .Where(a => a.CompletedDate >= reportingDateStart)
             .GroupBy(a => a.CompletedDate)
-            .ToDictionaryAsync(group => group.Key, group => group.Sum(a => a.Quantity));
+            .Select(group => new { Date = group.Key, Sum = group.Sum(a => a.Quantity) })
+            .ToDictionaryAsync(group => group.Date, group => group.Sum);
         SummaryStatisticsSnapshot result = new(
             counts.GetValueOrDefault(today, 0), 
             counts.GetValueOrDefault(yesterday, 0), 
