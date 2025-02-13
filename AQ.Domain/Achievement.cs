@@ -5,10 +5,11 @@ namespace AQ.Domain;
 public class Achievement
 {
     public long Id { get; set; }
-    public long AchievementClassId { get; set; }
     public required DateOnly CompletedDate { get; set; }
     public required int Quantity { get; set; }
-    public virtual AchievementClass AchievementClass { get; set; } = null!;
+    public required string Notes { get; set; }
+    public long AchievementClassId { get; set; }
+    public AchievementClass AchievementClass { get; set; } = null!;
     public override string ToString()
     {
         return new StringBuilder()
@@ -23,6 +24,8 @@ public class Achievement
             .Append(AchievementClass.Unit)
             .Append(", CompletedDate: ")
             .Append(CompletedDate)
+            .Append(", Notes: ")
+            .Append(Notes)
             .Append(" }")
             .ToString();
     }

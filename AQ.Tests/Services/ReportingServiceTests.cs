@@ -9,6 +9,7 @@ public class ReportingServiceTests : DbTestsBase
     private readonly FakeTimeProvider _timeProvider;
     private readonly DataContext _dataContext;
     private readonly IReportingService _reportingService;
+    private readonly IFixture _fixture;
     private readonly AchievementClass _achievementClass;
 
     public ReportingServiceTests()
@@ -16,8 +17,8 @@ public class ReportingServiceTests : DbTestsBase
         _timeProvider = new();
         _dataContext = CreateDataContext();
         _reportingService = new ReportingService(_dataContext, _timeProvider);
-        IFixture fixture = new Fixture().Customize(new DefaultCustomization());
-        _achievementClass = fixture.Create<AchievementClass>();
+        _fixture = new Fixture().Customize(new DefaultCustomization());
+        _achievementClass = _fixture.Create<AchievementClass>();
         _dataContext.AchievementClasses.Add(_achievementClass);
         _dataContext.SaveChanges();
     }
@@ -45,12 +46,11 @@ public class ReportingServiceTests : DbTestsBase
             DateOnly date = DateOnly.FromDateTime(_timeProvider.GetUtcNow().Date);
             foreach (int quantity in quantities[i])
             {
-                Achievement achievement = new()
-                {
-                    CompletedDate = date,
-                    Quantity = quantity,
-                    AchievementClass = _achievementClass,
-                };
+                Achievement achievement = _fixture.Build<Achievement>()
+                    .With(x => x.CompletedDate, date)
+                    .With(x => x.Quantity, quantity)
+                    .With(x => x.AchievementClass, _achievementClass)
+                    .Create();
                 _dataContext.Achievements.Add(achievement);
                 await _dataContext.SaveChangesAsync();
             }

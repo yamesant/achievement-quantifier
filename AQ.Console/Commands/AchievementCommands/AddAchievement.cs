@@ -56,6 +56,7 @@ public sealed class AddAchievement(
             AchievementClass = achievementClass,
             CompletedDate = settings.Date.Value,
             Quantity = settings.Quantity.Value,
+            Notes = "",
         };
 
         dataContext
