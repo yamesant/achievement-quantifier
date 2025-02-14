@@ -29,6 +29,10 @@ public sealed class UpdateAchievement(
         [CommandOption("-q|--quantity")]
         [Description("Specifies the new quantity of the to-be-updated achievement")]
         public int? Quantity { get; init; }
+        
+        [CommandOption("--notes")]
+        [Description("Specifies any extra information that does not fit into other fields of the to-be-updated achievement")]
+        public string? Notes { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)

@@ -17,14 +17,19 @@ public sealed class AddAchievement(
         [CommandOption("-n|--name")]
         [Description("Specifies the name of the achievement class that the to-be-added achievement should belong to")]
         public string? Name { get; init; }
+        
         [CommandOption("-d|--date")]
         [TypeConverter(typeof(DateOnlyTypeConverter))]
         [Description("Specifies the completion date in dd/MM/yyyy format of the to-be-added achievement")]
         public DateOnly? Date { get; set; }
-
+        
         [CommandOption("-q|--quantity")]
         [Description("Specifies the quantity of the to-be-added achievement")]
         public int? Quantity { get; set; }
+        
+        [CommandOption("--notes")]
+        [Description("Specifies any extra information that does not fit into other fields of the to-be-added achievement")]
+        public string? Notes { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
