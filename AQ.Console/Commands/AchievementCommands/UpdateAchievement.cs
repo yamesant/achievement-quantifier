@@ -29,6 +29,10 @@ public sealed class UpdateAchievement(
         [CommandOption("-q|--quantity")]
         [Description("Specifies the new quantity of the to-be-updated achievement")]
         public int? Quantity { get; init; }
+        
+        [CommandOption("--notes")]
+        [Description("Specifies any extra information that does not fit into other fields of the to-be-updated achievement")]
+        public string? Notes { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
@@ -53,6 +57,11 @@ public sealed class UpdateAchievement(
             throw new ArgumentException("Quantity must be greater than 0", nameof(settings.Quantity));
         }
         
+        if (settings.Notes is null)
+        {
+            throw new ArgumentException("Notes must be provided", nameof(settings.Quantity));
+        }
+        
         Achievement? achievement = await dataContext
             .Achievements
             .Include(achievement => achievement.AchievementClass)
@@ -63,8 +72,9 @@ public sealed class UpdateAchievement(
             return -1;
         }
 
-        achievement.CompletedDate = settings.Date!.Value;
-        achievement.Quantity = settings.Quantity!.Value;
+        achievement.CompletedDate = settings.Date.Value;
+        achievement.Quantity = settings.Quantity.Value;
+        achievement.Notes = settings.Notes;
         
         if (achievement.AchievementClass.Name != settings.Name)
         {

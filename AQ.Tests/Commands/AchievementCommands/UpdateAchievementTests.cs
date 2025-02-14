@@ -23,7 +23,7 @@ public class UpdateAchievementTests : DbTestsBase
     }
     
     [Theory, DefaultAutoData]
-    public async Task ShouldUpdate(DateOnly date, int quantity)
+    public async Task ShouldUpdate(DateOnly date, int quantity, string notes)
     {
         // Arrange
         UpdateAchievement.Settings settings = new()
@@ -32,6 +32,7 @@ public class UpdateAchievementTests : DbTestsBase
             Name = _achievement.AchievementClass.Name,
             Date = date,
             Quantity = quantity,
+            Notes = notes,
         };
         
         // Act
@@ -43,7 +44,8 @@ public class UpdateAchievementTests : DbTestsBase
                 a.Id == _achievement.Id &&
                 a.AchievementClass.Name == _achievement.AchievementClass.Name &&
                 a.CompletedDate == date &&
-                a.Quantity == quantity);
+                a.Quantity == quantity &&
+                a.Notes == notes);
                 
         // Assert
         Assert.Equal(0, result);
@@ -52,7 +54,7 @@ public class UpdateAchievementTests : DbTestsBase
     }
     
     [Theory, DefaultAutoData]
-    public async Task ShouldFailWhenIdIsNotProvided(DateOnly date, int quantity)
+    public async Task ShouldFailWhenIdIsNotProvided(DateOnly date, int quantity, string notes)
     {
         // Arrange
         UpdateAchievement.Settings settings = new()
@@ -61,6 +63,7 @@ public class UpdateAchievementTests : DbTestsBase
             Name = _achievement.AchievementClass.Name,
             Date = date,
             Quantity = quantity,
+            Notes = notes,
         };
         Task Action() => _command.ExecuteAsync(CommandContext, settings);
 
@@ -69,7 +72,7 @@ public class UpdateAchievementTests : DbTestsBase
     }
     
     [Theory, DefaultAutoData]
-    public async Task ShouldFailWhenNameIsNotProvided(DateOnly date, int quantity)
+    public async Task ShouldFailWhenNameIsNotProvided(DateOnly date, int quantity, string notes)
     {
         // Arrange
         UpdateAchievement.Settings settings = new()
@@ -78,6 +81,7 @@ public class UpdateAchievementTests : DbTestsBase
             Name = null,
             Date = date,
             Quantity = quantity,
+            Notes = notes,
         };
         Task Action() => _command.ExecuteAsync(CommandContext, settings);
 
@@ -86,7 +90,7 @@ public class UpdateAchievementTests : DbTestsBase
     }
     
     [Theory, DefaultAutoData]
-    public async Task ShouldFailWhenDateIsNotProvided(int quantity)
+    public async Task ShouldFailWhenDateIsNotProvided(int quantity, string notes)
     {
         // Arrange
         UpdateAchievement.Settings settings = new()
@@ -95,6 +99,7 @@ public class UpdateAchievementTests : DbTestsBase
             Name = _achievement.AchievementClass.Name,
             Date = null,
             Quantity = quantity,
+            Notes = notes,
         };
         Task Action() => _command.ExecuteAsync(CommandContext, settings);
 
@@ -103,7 +108,7 @@ public class UpdateAchievementTests : DbTestsBase
     }
     
     [Theory, DefaultAutoData]
-    public async Task ShouldFailWhenQuantityIsNotProvided(DateOnly date)
+    public async Task ShouldFailWhenQuantityIsNotProvided(DateOnly date, string notes)
     {
         // Arrange
         UpdateAchievement.Settings settings = new()
@@ -111,7 +116,26 @@ public class UpdateAchievementTests : DbTestsBase
             Id = _achievement.Id,
             Name = _achievement.AchievementClass.Name,
             Date = date,
-            Quantity = null
+            Quantity = null,
+            Notes = notes,
+        };
+        Task Action() => _command.ExecuteAsync(CommandContext, settings);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(Action);
+    }
+    
+    [Theory, DefaultAutoData]
+    public async Task ShouldFailWhenNotesIsNotProvided(DateOnly date, int quantity)
+    {
+        // Arrange
+        UpdateAchievement.Settings settings = new()
+        {
+            Id = _achievement.Id,
+            Name = _achievement.AchievementClass.Name,
+            Date = date,
+            Quantity = quantity,
+            Notes = null,
         };
         Task Action() => _command.ExecuteAsync(CommandContext, settings);
 

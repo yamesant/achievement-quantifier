@@ -16,6 +16,7 @@ public class DefaultCustomization : ICustomization
         {
             CompletedDate = fixture.Create<DateOnly>(),
             Quantity = fixture.Create<int>(),
+            Notes = fixture.Create<string>(),
         });
     }
 }
