@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AQ.Domain;
 
@@ -28,5 +30,17 @@ public class Achievement
             .Append(Notes)
             .Append(" }")
             .ToString();
+    }
+}
+
+public class AchievementConfiguration : IEntityTypeConfiguration<Achievement>
+{
+    public void Configure(EntityTypeBuilder<Achievement> builder)
+    {
+        builder.ToTable("Achievement");
+        builder.HasOne(x => x.AchievementClass).WithMany(x => x.Achievements)
+            .HasForeignKey(x => x.AchievementClassId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
+        builder.Property(x => x.Notes).HasMaxLength(1000);
     }
 }

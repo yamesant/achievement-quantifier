@@ -19,20 +19,6 @@ public class DataContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Achievement>(entity =>
-        {
-            entity.ToTable("Achievement");
-
-            entity.HasOne(d => d.AchievementClass).WithMany(p => p.Achievements)
-                .HasForeignKey(d => d.AchievementClassId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
-
-        modelBuilder.Entity<AchievementClass>(entity =>
-        {
-            entity.ToTable("AchievementClass");
-
-            entity.HasIndex(e => e.Name, "IX_AchievementClass_Name").IsUnique();
-        });
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
     }
 }
