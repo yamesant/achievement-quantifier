@@ -46,6 +46,7 @@ public sealed class AddAchievement(
 
         settings.Date ??= DateOnly.FromDateTime(timeProvider.GetUtcNow().Date);
         settings.Quantity ??= 1;
+        settings.Notes ??= "";
         
         AchievementClass? achievementClass = await dataContext
             .AchievementClasses
@@ -61,7 +62,7 @@ public sealed class AddAchievement(
             AchievementClass = achievementClass,
             CompletedDate = settings.Date.Value,
             Quantity = settings.Quantity.Value,
-            Notes = "",
+            Notes = settings.Notes,
         };
 
         dataContext
